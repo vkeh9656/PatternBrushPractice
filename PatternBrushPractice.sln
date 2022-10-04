@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32228.343
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PatternBrushPractice", "PatternBrushPractice.vcxproj", "{ED440AA0-9EA8-4D5C-9A08-C924CBE3A14A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ED440AA0-9EA8-4D5C-9A08-C924CBE3A14A}.Debug|x64.ActiveCfg = Debug|x64
+		{ED440AA0-9EA8-4D5C-9A08-C924CBE3A14A}.Debug|x64.Build.0 = Debug|x64
+		{ED440AA0-9EA8-4D5C-9A08-C924CBE3A14A}.Debug|x86.ActiveCfg = Debug|Win32
+		{ED440AA0-9EA8-4D5C-9A08-C924CBE3A14A}.Debug|x86.Build.0 = Debug|Win32
+		{ED440AA0-9EA8-4D5C-9A08-C924CBE3A14A}.Release|x64.ActiveCfg = Release|x64
+		{ED440AA0-9EA8-4D5C-9A08-C924CBE3A14A}.Release|x64.Build.0 = Release|x64
+		{ED440AA0-9EA8-4D5C-9A08-C924CBE3A14A}.Release|x86.ActiveCfg = Release|Win32
+		{ED440AA0-9EA8-4D5C-9A08-C924CBE3A14A}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B6F57261-7D23-40FF-BAF1-E58BA33E6F5E}
+	EndGlobalSection
+EndGlobal
