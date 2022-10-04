@@ -8,6 +8,9 @@
 // CPatternBrushPracticeDlg 대화 상자
 class CPatternBrushPracticeDlg : public CDialogEx
 {
+private:
+	CBrush m_normal_brush, m_small_brush;
+	CImage m_normal_image, m_small_image;
 // 생성입니다.
 public:
 	CPatternBrushPracticeDlg(CWnd* pParent = nullptr);	// 표준 생성자입니다.
