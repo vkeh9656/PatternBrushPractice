@@ -10,7 +10,8 @@ class CPatternBrushPracticeDlg : public CDialogEx
 {
 private:
 	CBrush m_normal_brush, m_small_brush;
-	CImage m_normal_image, m_small_image;
+	CImage m_normal_image, m_small_image, m_mem_view;
+	int m_radius = 10, m_alpha = 0, m_is_clicked = 0;
 // 생성입니다.
 public:
 	CPatternBrushPracticeDlg(CWnd* pParent = nullptr);	// 표준 생성자입니다.
@@ -33,4 +34,9 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 };

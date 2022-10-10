@@ -31,6 +31,10 @@ void CPatternBrushPracticeDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CPatternBrushPracticeDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_WM_MOUSEMOVE()
+	ON_WM_LBUTTONUP()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_MOUSEWHEEL()
 END_MESSAGE_MAP()
 
 
@@ -47,6 +51,24 @@ BOOL CPatternBrushPracticeDlg::OnInitDialog()
 
 	m_normal_image.Load(L"s_normal.png");
 	m_small_image.Load(L"s_small.png");
+
+	CRect win_rect, client_rect;
+	GetWindowRect(win_rect);
+	GetClientRect(client_rect);
+	
+	CBitmap *p_bmp = CBitmap::FromHandle(m_normal_image);
+	m_normal_brush.CreatePatternBrush(p_bmp);
+
+	p_bmp = CBitmap::FromHandle(m_small_image);
+	m_small_brush.CreatePatternBrush(p_bmp);
+
+	int w_fix = win_rect.Width() - client_rect.Width();
+	int h_fix = win_rect.Height() - client_rect.Height();
+
+	SetWindowPos(NULL, 0, 0, m_small_image.GetWidth() + w_fix, m_small_image.GetHeight() + h_fix, SWP_NOMOVE);
+
+	SetBackgroundColor(RGB(0, 0, 0));
+	m_mem_view.Create(m_small_image.GetWidth(), m_small_image.GetHeight(), 32); // 깜빡임 잡기용
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
@@ -75,7 +97,6 @@ void CPatternBrushPracticeDlg::OnPaint()
 	}
 	else
 	{
-		m_small_image.Draw(dc, 0, 0);
 		//CDialogEx::OnPaint();
 	}
 }
@@ -87,3 +108,115 @@ HCURSOR CPatternBrushPracticeDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+
+void CPatternBrushPracticeDlg::OnMouseMove(UINT nFlags, CPoint point)
+{
+	CClientDC dc(this);
+
+	CDC *p_dc = CDC::FromHandle(m_mem_view.GetDC());
+	
+	CBrush* p_old_brush;
+	
+	if (m_is_clicked)
+	{
+		p_dc->SetBrushOrg(point.x *(-1), point.y*(-1));
+		p_old_brush = p_dc->SelectObject(&m_normal_brush);
+	}
+	else
+	{
+		p_dc->SetBrushOrg(0, 0);
+		p_old_brush = p_dc->SelectObject(&m_small_brush);
+	}
+
+	p_dc->FillSolidRect(0, 0, m_small_image.GetWidth(), m_small_image.GetHeight(), RGB(0, 0, 0));
+	m_small_image.AlphaBlend(*p_dc, 0, 0, m_alpha);
+
+	p_dc->Ellipse(point.x - m_radius, point.y - m_radius, point.x + m_radius, point.y + m_radius);
+	p_dc->SelectObject(p_old_brush);
+
+
+	if (m_is_clicked)
+	{
+		CPen grid_pen(PS_DOT, 1, RGB(160, 160, 160));
+		CPen* p_old_pen = p_dc->SelectObject(&grid_pen);
+		p_dc->SetBkMode(TRANSPARENT);
+		p_dc->MoveTo(point.x, point.y - m_radius);
+		p_dc->LineTo(point.x, point.y + m_radius);
+
+		p_dc->MoveTo(point.x - m_radius, point.y);
+		p_dc->LineTo(point.x + m_radius, point.y);
+		p_dc->SelectObject(p_old_pen);
+	}
+
+
+	m_mem_view.ReleaseDC();
+
+	m_mem_view.Draw(dc, 0, 0);
+
+	/*CDialogEx::OnMouseMove(nFlags, point);*/
+}
+
+
+
+BOOL CPatternBrushPracticeDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+	int old_radius = m_radius;
+	int old_alpha = m_alpha;
+	if (zDelta > 0)
+	{
+		if (nFlags & MK_CONTROL)
+		{
+			m_alpha -= 10;
+			if (m_alpha < 0) m_alpha = 0;
+		}
+		else
+		{
+			if (m_radius >= 20) m_radius -= 10;
+		}
+	}
+
+	else
+	{
+		if (nFlags & MK_CONTROL)
+		{
+			m_alpha += 10;
+			if (m_alpha > 255)m_alpha = 255;
+		}
+		else
+		{
+			if (m_radius < 100) m_radius += 10;
+		}
+	}
+
+	if (old_radius != m_radius || old_alpha != m_alpha)
+	{
+		POINT pos;
+		GetCursorPos(&pos);
+		ScreenToClient(&pos);
+		OnMouseMove(0, pos);
+	}
+
+	return CDialogEx::OnMouseWheel(nFlags, zDelta, pt);
+}
+
+
+
+void CPatternBrushPracticeDlg::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	m_is_clicked = 1;
+	SetCapture(); // ReleaseCapture() 할때까지 메시지 받음
+	OnMouseMove(nFlags, point);
+
+	CDialogEx::OnLButtonDown(nFlags, point);
+}
+
+
+void CPatternBrushPracticeDlg::OnLButtonUp(UINT nFlags, CPoint point)
+{
+	m_is_clicked = 0;
+	ReleaseCapture();
+	OnMouseMove(nFlags, point);
+
+	CDialogEx::OnLButtonUp(nFlags, point);
+}
